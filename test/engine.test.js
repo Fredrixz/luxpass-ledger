@@ -19,6 +19,22 @@ test('mineBlock ger en hash med rätt antal ledande nollor', () => {
   assert.equal(block.hash, block.calculateHash());
 });
 
+test('hashen är deterministisk oavsett nyckelordning och skräpfält', () => {
+  const a = new Block(
+    1,
+    1000,
+    [{ serialNumber: 'A', fromAddress: 'x', toAddress: 'y', timestamp: 5 }],
+    'prev',
+  );
+  const b = new Block(
+    1,
+    1000,
+    [{ timestamp: 5, toAddress: 'y', fromAddress: 'x', serialNumber: 'A', extra: 1 }],
+    'prev',
+  );
+  assert.equal(a.hash, b.hash);
+});
+
 test('minePendingTransactions lägger till block och tömmer poolen', () => {
   const chain = new Blockchain(1);
   chain.addTransaction({
