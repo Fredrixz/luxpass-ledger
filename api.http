@@ -1,0 +1,49 @@
+@host = http://localhost:3000
+
+### Info om API:t
+GET {{host}}/
+
+### Hela liggaren
+GET {{host}}/api/chain
+
+### Väntande transaktioner
+GET {{host}}/api/pending
+
+### 1. Utfärda pass – tillverkaren registrerar klockan på förste ägaren
+POST {{host}}/api/transactions
+Content-Type: application/json
+
+{
+  "serialNumber": "ROLEX-SUB-9981",
+  "fromAddress": "0xManufacturerKey",
+  "toAddress": "0xCollectorA"
+}
+
+### 2. Mina poolen
+POST {{host}}/api/mine
+
+### 3. Överlåt vidare (från nuvarande ägare)
+POST {{host}}/api/transactions
+Content-Type: application/json
+
+{
+  "serialNumber": "ROLEX-SUB-9981",
+  "fromAddress": "0xCollectorA",
+  "toAddress": "0xCollectorB"
+}
+
+### 4. Mina igen
+POST {{host}}/api/mine
+
+### 5. Verifiera – historik + nuvarande ägare
+GET {{host}}/api/verify/ROLEX-SUB-9981
+
+### Ska nekas (422) – Ken äger inte klockan
+POST {{host}}/api/transactions
+Content-Type: application/json
+
+{
+  "serialNumber": "ROLEX-SUB-9981",
+  "fromAddress": "0xKen",
+  "toAddress": "0xSkelly"
+}
